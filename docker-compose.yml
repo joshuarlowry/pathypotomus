@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  pathypotomus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ORIGIN_ADDR=${ORIGIN_ADDR}
+      - DEST_ADDR=${DEST_ADDR}
+      - OSRM_URL=http://osrm:5000
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-gpt-3.5-turbo}
+      - OUTPUT_PATH=/app/output/routes.html
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./output:/app/output
+      - ./config:/app/config
+    ports:
+      - "8000:8000"
+    depends_on:
+      - osrm
+    restart: unless-stopped
+
+  osrm:
+    image: osrm/osrm-backend:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./osrm-data:/data
+    command: osrm-routed --algorithm mld /data/map.osrm
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  osrm-data:
+    driver: local
