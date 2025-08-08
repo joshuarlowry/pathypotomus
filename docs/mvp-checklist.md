@@ -32,11 +32,11 @@ A phased approach to building the LLM-Powered Route Planner MVP with clear deliv
   - **Acceptance**: ✅ Clear error messages for missing/invalid config
 
 ### Core Dependencies
-- [ ] **Routing Engine Integration**
-  - [ ] Install and configure OSRM client library
+- [x] **Routing Engine Integration**
+  - [x] Implement OSRM service client (HTTP) and configure base URL
   - [ ] Test connection to public OSRM demo server
   - [ ] Implement fallback to local OSRM instance
-  - **Acceptance**: Can successfully query OSRM for basic routes
+  - **Acceptance**: Can successfully query OSRM for basic routes (pending integration test)
 
 - [ ] **LLM Integration**
   - [ ] Set up OpenAI API client (or alternative LLM service)
@@ -55,21 +55,21 @@ A phased approach to building the LLM-Powered Route Planner MVP with clear deliv
 ### OSRM Integration
 - [ ] **Route Calculation**
   - [ ] Implement geocoding for address-to-coordinates conversion
-  - [ ] Query OSRM `/route/v1/driving/` endpoint with alternatives
-  - [ ] Parse and validate OSRM response format
-  - [ ] Extract route geometry, distance, and duration
-  - **Acceptance**: Returns 1-3 valid route alternatives for test addresses
+  - [x] Query OSRM `/route/v1/driving/` endpoint with alternatives
+  - [x] Parse and validate OSRM response format
+  - [x] Extract route geometry, distance, and duration
+  - **Acceptance**: Returns 1-3 valid route alternatives for test addresses (blocked on geocoding/integration)
 
 - [ ] **Route Processing**
-  - [ ] Decode polyline geometry to coordinate arrays
+  - [x] Decode polyline geometry to coordinate arrays
   - [ ] Simplify route geometry for display (if needed)
-  - [ ] Extract major road names from OSRM step summaries
-  - [ ] Calculate human-readable distance/time formats
+  - [x] Extract major road names from OSRM step summaries
+  - [x] Calculate human-readable distance/time formats
   - **Acceptance**: Clean route data ready for visualization and LLM processing
 
 - [ ] **Error Handling**
-  - [ ] Handle OSRM service unavailability
-  - [ ] Validate route calculation results
+  - [x] Handle OSRM service unavailability (HTTP errors → RoutingError)
+  - [x] Validate route calculation results (OSRM code != Ok → RoutingError)
   - [ ] Provide meaningful error messages for invalid addresses
   - **Acceptance**: Graceful failure with clear error reporting
 

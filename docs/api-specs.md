@@ -309,9 +309,9 @@ Interface for route calculations using OSRM.
 class OSRMService:
     """OSRM routing service client"""
     
-    def __init__(self, base_url: str = "https://router.project-osrm.org"):
+    def __init__(self, base_url: str = "https://router.project-osrm.org", session: Optional[aiohttp.ClientSession] = None):
         self.base_url = base_url.rstrip('/')
-        self.session = aiohttp.ClientSession()
+        self.session = session or aiohttp.ClientSession()
     
     async def get_routes(self, origin: Coordinates, destination: Coordinates, 
                         alternatives: bool = True, max_alternatives: int = 3) -> List[Route]:

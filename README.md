@@ -33,7 +33,7 @@ python src/main.py
 
 ## 📋 Features (MVP v1)
 
-- ✅ **OSRM-Powered Routing**: Generate up to 3 optimal route alternatives
+- ✅ **OSRM-Powered Routing**: OSRM client implemented and tested (unit). Integration with live OSRM pending geocoding step
 - ✅ **AI Route Descriptions**: LLM-generated names and descriptions for each route
 - ✅ **Static Map Output**: Visual route comparison with color-coded paths
 - ✅ **Self-Hosted**: Complete solution runs on your infrastructure
