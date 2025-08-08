@@ -106,10 +106,10 @@ GET /route/v1/driving/{lon1},{lat1};{lon2},{lat2}
 
 **Key Classes**:
 ```python
-class OSRMClient:
-    def get_routes(self, origin: Coordinates, dest: Coordinates) -> List[Route]
-    def decode_polyline(self, encoded: str) -> List[Coordinates]
-    def extract_road_names(self, steps: List[Step]) -> List[str]
+class OSRMService:
+    async def get_routes(self, origin: Coordinates, dest: Coordinates, alternatives: bool = True, max_alternatives: int = 3) -> List[Route]
+    def _decode_polyline(self, encoded: str) -> List[Coordinates]
+    def _extract_major_roads(self, legs: List[dict]) -> List[str]
 
 class Route:
     geometry: List[Coordinates]

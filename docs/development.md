@@ -675,3 +675,39 @@ bump2version major  # 1.1.0 -> 2.0.0
 - Report bugs and suggest improvements
 
 This development guide provides the foundation for maintaining high code quality and smooth collaboration on the LLM-Powered Route Planner project.
+
+## 🧭 OSRM Routing Notes
+
+- Implemented `pathypotomus.services.osrm.OSRMService` with:
+  - URL shape: `/route/v1/driving/{lon1},{lat1};{lon2},{lat2}`
+  - Params: `alternatives=true|false`, `overview=simplified`, `steps=true`, `geometries=polyline`
+  - Polyline decoding via `polyline` package
+  - Major roads extracted from legs[].steps[].name (deduped, max 5)
+  - Summary generated: `Local roads` | `via <road>` | `via <road> and N other roads`
+- Error handling:
+  - Non-200 HTTP → `RoutingError`
+  - OSRM `code != 'Ok'` → `RoutingError`
+- Testing strategy:
+  - Async unit tests with a fake aiohttp-like session/response
+  - Validate params, decoding, limits, and error paths
+  - Keep `PYTHONPATH=/workspace/src` when running tests locally
+
+## 🤖 Future LLM Integration Notes
+
+- Mocking:
+  - Provide `MockLLMService` returning deterministic name/description tuples
+  - Guard for token/length constraints; truncate at 50/150 chars respectively
+- Concurrency:
+  - Use `asyncio.gather` to parallelize calls per route; set `return_exceptions=True`
+  - Collect per-route fallbacks when exceptions occur; do not fail the batch
+- Fallbacks:
+  - On LLM errors: name = `Route {i}`, description = `{distance_km} km ({duration_formatted}) [via {first_road}]`
+  - Consider caching descriptions keyed by route hash (geometry + summary)
+- Observability:
+  - Log prompts and model, but redact PII; include timing and retries
+  - Add counters: successes, fallbacks, avg latency
+- Configuration:
+  - `LLM_PROVIDER`, `LLM_MODEL`, timeouts, and per-request max tokens in config
+- Testing:
+  - Unit: prompt builders, validation, truncation
+  - Integration (optional): gated tests using live API with `-m llm` marker
