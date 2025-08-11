@@ -185,3 +185,6 @@ logs/
 tmp/
 temp/
 .tmp/
+
+# Generated static site
+site/
