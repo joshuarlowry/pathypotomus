@@ -79,6 +79,4 @@ python src/main.py
 
 See [Development Guidelines](docs/development.md) for setup instructions and contribution workflow.
 
-## 📄 License
 
-MIT License - see [LICENSE](LICENSE) for details.
