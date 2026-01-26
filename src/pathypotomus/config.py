@@ -21,14 +21,18 @@ class Config(BaseModel):
     )
     llm_api_key: Optional[str] = Field(
         default=None,
-        description="API key for LLM service"
+        description="API key for LLM service (OpenAI or OpenRouter)"
+    )
+    llm_base_url: str = Field(
+        default="https://openrouter.ai/api/v1",
+        description="Base URL for LLM service"
     )
     llm_model: str = Field(
-        default="gpt-3.5-turbo",
+        default="google/gemini-flash-1.5",
         description="LLM model to use"
     )
     llm_provider: str = Field(
-        default="openai",
+        default="openrouter",
         description="LLM provider"
     )
     output_path: str = Field(
@@ -58,6 +62,10 @@ class Config(BaseModel):
         ge=1,
         description="Request timeout in seconds"
     )
+    cache_dir: str = Field(
+        default=".cache",
+        description="Directory for caching LLM responses"
+    )
     
     model_config = ConfigDict(env_prefix="", case_sensitive=False)
         
@@ -86,6 +94,15 @@ class Config(BaseModel):
         # Ensure directory exists
         output_dir = Path(v).parent
         output_dir.mkdir(parents=True, exist_ok=True)
+        return v
+    
+    @field_validator('cache_dir')
+    @classmethod
+    def validate_cache_dir(cls, v):
+        """Validate and create cache directory."""
+        if not v:
+            v = ".cache"
+        Path(v).mkdir(parents=True, exist_ok=True)
         return v
 
 
@@ -129,6 +146,8 @@ def load_config(env_file: Optional[str] = None) -> Config:
         'DEST_ADDR': 'dest_addr',
         'OSRM_URL': 'osrm_url',
         'LLM_API_KEY': 'llm_api_key',
+        'OPENROUTER_API_KEY': 'llm_api_key',  # Support alternate name
+        'LLM_BASE_URL': 'llm_base_url',
         'LLM_MODEL': 'llm_model',
         'LLM_PROVIDER': 'llm_provider',
         'OUTPUT_PATH': 'output_path',
@@ -137,6 +156,7 @@ def load_config(env_file: Optional[str] = None) -> Config:
         'ENABLE_DEBUG_MODE': 'enable_debug_mode',
         'MAX_ROUTES': 'max_routes',
         'REQUEST_TIMEOUT': 'request_timeout',
+        'CACHE_DIR': 'cache_dir',
     }
     
     for env_var, config_key in env_mapping.items():

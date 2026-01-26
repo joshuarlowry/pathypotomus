@@ -65,8 +65,10 @@ async def async_main(config, logger) -> int:
         logger.info("Generating AI descriptions...")
         llm_service = LLMService(
             api_key=config.llm_api_key,
+            base_url=config.llm_base_url,
             model=config.llm_model,
-            provider=config.llm_provider
+            provider=config.llm_provider,
+            cache_dir=config.cache_dir
         )
         
         processed_routes = []
