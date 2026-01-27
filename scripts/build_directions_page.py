@@ -271,13 +271,24 @@ def main():
     // Promisified Geocode
     function geocodeQuery(query) {
         return new Promise((resolve, reject) => {
-            geocoder.geocode(query, (results) => {
-                if (results && results.length > 0) {
-                    resolve(results[0]);
-                } else {
-                    reject("Could not find location: " + query);
-                }
-            });
+            // Set a timeout to prevent infinite hanging
+            const timeoutId = setTimeout(() => {
+                reject("Geocoding timed out. Please check your internet connection.");
+            }, 10000);
+
+            try {
+                geocoder.geocode(query, (results) => {
+                    clearTimeout(timeoutId);
+                    if (results && results.length > 0) {
+                        resolve(results[0]);
+                    } else {
+                        reject("Could not find location: " + query);
+                    }
+                });
+            } catch (e) {
+                clearTimeout(timeoutId);
+                reject("Geocoding error: " + e);
+            }
         });
     }
 
